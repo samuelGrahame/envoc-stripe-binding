@@ -20,10 +20,11 @@ namespace StripeTerminal.Payment
         //    DeviceName = metadata.DeviceName;
         //}
 
-        public PaymentRequest(decimal amount, Dictionary<string, string> metadata)
+        public PaymentRequest(decimal amount, Dictionary<string, string> metadata, string currency = "usd")
         {
             Amount = amount;
             Metadata = metadata;
+            Currency = currency;
         }
 
         public decimal Amount { get; }
@@ -33,6 +34,7 @@ namespace StripeTerminal.Payment
         //public string ServerCartId { get; }
         //public string DeviceId { get; }
         //public string DeviceName { get; }
+        public string Currency { get; }
 
         public Dictionary<string, string> Metadata { get; }
 
