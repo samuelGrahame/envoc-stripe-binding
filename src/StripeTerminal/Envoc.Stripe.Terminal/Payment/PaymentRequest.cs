@@ -4,14 +4,16 @@ namespace StripeTerminal.Payment
 {
     public class PaymentRequest
     {
-        public PaymentRequest(decimal amount, Dictionary<string, string> metadata, string paymentIntentSecret = null)
+        public PaymentRequest(decimal amount, Dictionary<string, string> metadata, string paymentIntentSecret = null, string currency = null)
         {
             Amount = amount;
             Metadata = metadata;
             PaymentIntentSecret = paymentIntentSecret;
+            Currency = string.IsNullOrWhiteSpace(currency) ? "usd" : Currency;
         }
 
         public decimal Amount { get; }
+        public string Currency { get; set; }
 
         public string PaymentIntentSecret { get; }
 

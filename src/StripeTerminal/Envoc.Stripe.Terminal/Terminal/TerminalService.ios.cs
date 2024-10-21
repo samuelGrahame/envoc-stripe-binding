@@ -468,7 +468,7 @@ public partial class TerminalService : SCPDiscoveryDelegate
         try
         {
             var parameters =
-                new SCPPaymentIntentParametersBuilder(amount, "usd")
+                new SCPPaymentIntentParametersBuilder(amount, payment.Currency)
                     //.SetAmount(amount)
                     //.SetCurrency("usd")
                     .SetPaymentMethodTypes(new[] { "card_present" })
