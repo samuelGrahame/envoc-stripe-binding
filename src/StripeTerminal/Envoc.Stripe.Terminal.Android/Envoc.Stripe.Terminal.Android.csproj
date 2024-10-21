@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net7.0-android</TargetFramework>
+		<TargetFramework>net8.0-android33.0</TargetFramework>
 		<SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
@@ -47,9 +47,9 @@
 		<PackageReference Include="Xamarin.AndroidX.Core.Core.Ktx" Version="1.12.0.1" />
 		<PackageReference Include="Xamarin.AndroidX.DataBinding.ViewBinding" Version="7.4.2" />
 		<PackageReference Include="Xamarin.AndroidX.Fragment.Ktx" Version="1.6.1" />
-		<PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData.Ktx" Version="2.6.2.1" />
-		<PackageReference Include="Xamarin.AndroidX.Lifecycle.Process" Version="2.6.2.1" />
-		<PackageReference Include="Xamarin.AndroidX.Lifecycle.ViewModel.Ktx" Version="2.6.2.1" />
+		<PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData.Ktx" Version="2.8.6" />
+		<PackageReference Include="Xamarin.AndroidX.Lifecycle.Process" Version="2.8.6" />
+		<PackageReference Include="Xamarin.AndroidX.Lifecycle.ViewModel.Ktx" Version="2.8.6" />
 		<PackageReference Include="Xamarin.AndroidX.Room.Room.Ktx" Version="2.5.2" />
 		<PackageReference Include="Xamarin.AndroidX.Room.Runtime" Version="2.5.2" />
 		<PackageReference Include="Xamarin.AndroidX.Security.SecurityCrypto" Version="1.1.0-alpha03" />
