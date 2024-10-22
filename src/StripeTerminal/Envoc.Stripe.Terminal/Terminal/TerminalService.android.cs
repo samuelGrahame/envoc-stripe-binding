@@ -291,6 +291,10 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
               autoReconnectOnUnexpectedDisconnect: true,
               readerReconnector
             );
+            if(bluetoothConnector != null)
+            {
+                bluetoothConnector.SerialNumber = reader.SerialNumber;
+            }
 
             Instance.ConnectBluetoothReader(selectedReader, config: connectionConfig, listener: bluetoothConnector, new ConnectionCallback(SetConnectionDelegate));
         }

@@ -7,6 +7,7 @@ public class BluetoothConnector : Java.Lang.Object, IReaderListener
 {
     private readonly IStripeTerminalLogger logger;
     private readonly IStripeBatteryUpdater batteryUpdater;
+    public string SerialNumber { get; set; }
 
     public BluetoothConnector(IStripeTerminalLogger logger, IStripeBatteryUpdater batteryUpdater)
     {
@@ -63,13 +64,13 @@ public class BluetoothConnector : Java.Lang.Object, IReaderListener
     }
 
     public void OnReportAvailableUpdate(Models.ReaderSoftwareUpdate update)
-    {
-        //ReaderUpdateAvailable.Invoke(null, new ReaderSoftwareUpdateEventArgs(update, reader.SerialNumber));
+    {        
+        ReaderUpdateAvailable.Invoke(null, new ReaderSoftwareUpdateEventArgs(update, SerialNumber));
     }
 
     public void OnStartInstallingUpdate(Models.ReaderSoftwareUpdate update, ICancelable cancelable)
     {
-        //ReaderUpdateAvailable.Invoke(null, new ReaderSoftwareUpdateEventArgs(update, reader.SerialNumber));
+        ReaderUpdateAvailable.Invoke(null, new ReaderSoftwareUpdateEventArgs(update, SerialNumber));
     }
 
     public void OnFinishInstallingUpdate(Models.ReaderSoftwareUpdate update, Models.TerminalException error)
