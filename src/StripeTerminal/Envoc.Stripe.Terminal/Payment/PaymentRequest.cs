@@ -9,7 +9,7 @@ namespace StripeTerminal.Payment
             Amount = amount;
             Metadata = metadata;
             PaymentIntentSecret = paymentIntentSecret;
-            Currency = string.IsNullOrWhiteSpace(currency) ? "usd" : Currency;
+            Currency = string.IsNullOrWhiteSpace(currency) ? "usd" : currency;
         }
 
         public decimal Amount { get; }
