@@ -3,8 +3,9 @@ Maui Binding for Stripe's SDK
 https://github.com/stripe
 
 ## Stripe Terminal SDK Binding
-### iOS
 https://stripe.com/docs/terminal
+
+### iOS
 https://github.com/stripe/stripe-terminal-ios
 
 The Stripe Terminal iOS SDK is compatible with apps supporting iOS 13 and above.
@@ -37,3 +38,127 @@ Add background modes (optional):
 
 ### Breaking changes with v3.8.1+
 Several configurations that use the builder pattern were changed to read-only so the setters were removed.
+
+### Android
+https://github.com/stripe/stripe-terminal-android
+
+#### AndroidManifest.xml
+Add the correct permissions:
+
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<uses-permission android:name="android.permission.BLUETOOTH" />
+	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+	<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+	<uses-permission android:name="android.permission.BLUETOOTH_SCAN" />	
+
+
+ ### Notes
+
+When calling ConnectReader - if the device has not updated or a required update it will stay in status "Connecting" until the update has been processed.
+
+ ```csharp
+internal class AppStripeConnectionToken : IConnectionTokenProviderService
+{
+    public async Task<string> FetchConnectionToken()
+    {
+        var result = await GetConnectionToken(); // Get Connection Token - https://docs.stripe.com/api/terminal/connection_tokens/create?lang=dotnet
+        if(String.IsNullOrWhiteSpace(result))
+        {
+            throw new ArgumentNullException(nameof(FetchConnectionToken));
+        }
+
+        return result;
+    }
+}
+
+var  _connector = new BluetoothConnector(null, null);
+// Create the service - Android:
+var service = new TerminalService(null, new AppStripeConnectionToken(),
+    connector, new StripeTerminal.Connectivity.ReaderReconnector(), new MemoryReaderCache(), null);
+
+await service.Initialize();  // Initializes Stripe Terminal SDK
+
+await service.GetBluetoothReaders(async (readers) =>
+{
+    var reader = readers?.FirstOrDefault(); // Get First Bluetooth reader...
+
+    if (reader == null)
+    {                        
+        Dispatcher.Dispatch(() =>
+        {
+            UpdateStatus("Unable to locate any readers.", true);
+        });
+
+        return;
+    }
+
+    var location = await GetLocationId(); // Create or Get Location Id: https://docs.stripe.com/api/terminal/locations/create
+    if (string.IsNullOrWhiteSpace(location))
+    {
+        Dispatcher.Dispatch(() =>
+        {
+            UpdateStatus("Unable to create a stripe location id.", true);
+        });
+        
+        return;
+    }
+
+    Dispatcher.Dispatch(() =>
+    {
+        UpdateStatus("Connecting to reader", false);
+    });
+
+#if ANDROID || IOS
+    // Show end user update info
+    _connector.ReaderUpdateAvailable += _connector_ReaderUpdateAvailable;
+    _connector.ReaderUpdateProgress += _connector_ReaderUpdateProgress;
+    _connector.ReaderErrorMessage += _connector_ReaderErrorMessage;
+#endif
+
+    Reader = await service.ConnectReader(new StripeTerminal.ReaderConnectionRequest()
+    {
+        CurrentStripeLocationId = location,
+        Reader   = reader
+    });
+
+    if(Reader == null)
+    {
+        Dispatcher.Dispatch(() =>
+        {
+            UpdateStatus("Unable to get reader", false);
+        }); 
+    }
+    else
+    {
+        // We now have access to a connected reader.
+        var paymentIntentId = await GetPaymentIntent(amount); // Create Payment Intent: https://docs.stripe.com/api/payment_intents/create
+        
+        StripeTerminal.Payment.PaymentResponse collectPaymentResponse = await service.CollectPayment(
+            new StripeTerminal.Payment.PaymentRequest(amount, new Dictionary<string, string>(), 
+            paymentIntentSecret: paymentIntentId, currency: "aud")); // Enter currency
+        
+        if (collectPaymentResponse == null)
+        {
+            Dispatcher.Dispatch(async () =>
+            {
+                UpdateStatus("No response from Stripe Termianl", true);                
+            });
+        
+            return;
+        }
+        
+        if (collectPaymentResponse.HasError)
+        {
+            Dispatcher.Dispatch(async () =>
+            {
+                UpdateStatus(collectPaymentResponse.Error, true);                
+            });
+        
+            return;
+        }
+
+        // Handle Payment
+    }     
+});
+
+```
